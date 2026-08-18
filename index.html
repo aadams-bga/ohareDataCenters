@@ -7,24 +7,31 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 <style>
-  html, body { margin: 0; padding: 0; }
+  html, body { margin: 0; padding: 0; height: 100%; }
   body {
     font-family: "Halyard Text", "halyard-text", "Inter", Arial, sans-serif;
     color: #333333;
     background: #ffffff;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 680px; margin: 0 auto; padding: 20px 20px 30px 20px; box-sizing: border-box; }
-  h1 { font-size: 22px; font-weight: 700; color: #1a1a1a; margin: 0 0 8px 0; line-height: 1.25; }
-  .subtitle { font-size: 14px; color: #4a5568; font-weight: 400; margin: 0 0 16px 0; line-height: 1.45; }
-  .dek-instruction { display: inline-block; margin-top: 6px; font-style: italic; color: #718096; }
-  #map { width: 100%; height: 540px; border: 1px solid #e5e7eb; }
-  .graph-footer {
-    margin-top: 14px;
-    font-size: 11px; color: #718096; line-height: 1.5;
+  .wrap {
+    max-width: 680px; margin: 0 auto; padding: 16px 18px 18px 18px; box-sizing: border-box;
+    min-height: 100%; display: flex; flex-direction: column;
   }
-  .graph-footer .footer-note { margin-top: 8px; }
-  .views { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin: 0 0 12px 0; }
+  h1 { font-size: 21px; font-weight: 700; color: #1a1a1a; margin: 0 0 5px 0; line-height: 1.2; }
+  .subtitle { font-size: 13px; color: #4a5568; font-weight: 400; margin: 0 0 9px 0; line-height: 1.4; }
+  .dek-instruction { display: inline-block; margin-top: 6px; font-style: italic; color: #718096; }
+  #map { width: 100%; flex: 1 1 auto; min-height: 380px; border: 1px solid #e5e7eb; }
+  h1, .subtitle, .views, .graph-footer { flex: 0 0 auto; }
+  .graph-footer {
+    margin-top: 10px;
+    font-size: 11px; color: #718096; line-height: 1.45;
+  }
+  .graph-footer .footer-note { margin-top: 6px; }
+  .graph-footer details { margin-top: 5px; }
+  .graph-footer summary { cursor: pointer; color: #4a5568; font-weight: 600; }
+  .graph-footer summary:hover { color: #1a1a1a; }
+  .views { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin: 0 0 8px 0; }
   .views-label {
     font-size: 12px; font-weight: 500; color: #a0aab5;
     letter-spacing: 0.01em; flex: 0 0 auto;
@@ -65,8 +72,9 @@
     top: 0; margin-top: -20px; transform: rotate(180deg);
   }
   @media (max-width: 640px) {
-    .wrap { padding: 15px; }
-    #map { height: 460px; }
+    .wrap { padding: 12px; }
+    h1 { font-size: 18px; }
+    .subtitle { font-size: 12.5px; }
   }
 </style>
 </head>
@@ -83,7 +91,10 @@
   <div id="map"></div>
   <footer class="graph-footer">
     <div>Map: Andrew Adams, Illinois Answers Project &bull; Data: Illinois Answers Project and Chicago Tribune analysis of Cook County Assessor records.</div>
-    <div class="footer-note">Note: The combined tax savings a property receives from incentives and reductions may not equal the sum of savings it would receive individually from each, because incentives and reductions act differently on a property&rsquo;s tax assessment level. An incentive lowers the property&rsquo;s assessment level by a fixed proportion over time, while a Board of Review reduction represents a one-time decrease in assessed value after the incentive has been applied.</div>
+    <details>
+      <summary>Note on the combined figures</summary>
+      <div class="footer-note">The combined tax savings a property receives from incentives and reductions may not equal the sum of savings it would receive individually from each, because incentives and reductions act differently on a property&rsquo;s tax assessment level. An incentive lowers the property&rsquo;s assessment level by a fixed proportion over time, while a Board of Review reduction represents a one-time decrease in assessed value after the incentive has been applied.</div>
+    </details>
   </footer>
 </div>
 
