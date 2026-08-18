@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>O&rsquo;Hare area data centers avoided $100 million in taxes thanks to incentives and reductions</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<style>
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Halyard Text", "halyard-text", "Inter", Arial, sans-serif;
+    color: #333333;
+    background: #ffffff;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 20px 20px 30px 20px; box-sizing: border-box; }
+  h1 { font-size: 22px; font-weight: 700; color: #1a1a1a; margin: 0 0 8px 0; line-height: 1.25; }
+  .subtitle { font-size: 14px; color: #4a5568; font-weight: 400; margin: 0 0 16px 0; line-height: 1.45; }
+  .dek-instruction { display: inline-block; margin-top: 6px; font-style: italic; color: #718096; }
+  #map { width: 100%; height: 540px; border: 1px solid #e5e7eb; }
+  .graph-footer {
+    margin-top: 14px;
+    font-size: 11px; color: #718096; line-height: 1.5;
+  }
+  .graph-footer .footer-note { margin-top: 8px; }
+  /* View toggle */
+  .views { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin: 0 0 12px 0; }
+  .views-label {
+    font-size: 12px; font-weight: 500; color: #a0aab5;
+    letter-spacing: 0.01em; flex: 0 0 auto;
+  }
+  /* Text toggles rather than buttons: the underline marks the active view, so the
+     controls sit at the same visual weight as the "Show:" label beside them. */
+  .views button {
+    font-family: inherit; font-size: 12px; font-weight: 500; line-height: 1.3;
+    color: #718096; background: none; border: 0;
+    border-bottom: 2px solid transparent;
+    padding: 0 0 2px 0; cursor: pointer;
+    -webkit-appearance: none; appearance: none;
+  }
+  .views button:hover { color: #1a1a1a; border-bottom-color: #d7dce3; }
+  .views button[aria-pressed="true"] {
+    color: #1a1a1a; font-weight: 600; border-bottom-color: #1a1a1a;
+  }
+  .views button:focus-visible { outline: 2px solid #2a78d6; outline-offset: 3px; }
+  /* Legend */
+  .legend {
+    background: rgba(255,255,255,0.94); padding: 8px 10px; border-radius: 0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2); font-size: 11px; color: #333; line-height: 1.5;
+    max-width: 165px;
+  }
+  .legend .legend-title { font-weight: 700; margin-bottom: 4px; color: #1a1a1a; line-height: 1.3; }
+  .legend .row { display: flex; align-items: center; margin: 1px 0; }
+  .legend .swatch {
+    width: 12px; height: 12px; border-radius: 50%; margin-right: 6px;
+    border: 1px solid rgba(0,0,0,0.35); flex: 0 0 auto;
+  }
+  .legend .legend-note { margin-top: 5px; color: #718096; font-size: 10px; max-width: 150px; line-height: 1.35; }
+  /* Popup */
+  .leaflet-popup-content { margin: 10px 12px; font-size: 13px; line-height: 1.5; color: #333; }
+  .leaflet-popup-content .pop-addr { font-weight: 700; font-size: 14px; color: #1a1a1a; display: block; margin-bottom: 1px; }
+  .leaflet-popup-content .pop-sub { display: block; color: #718096; margin-bottom: 5px; }
+  .leaflet-popup-content .pop-row { display: block; }
+  .leaflet-popup-content .pop-label { color: #718096; }
+  .leaflet-popup-content .pop-note { font-style: italic; color: #718096; margin-top: 2px; }
+  /* Placement is computed in JS, so drop Leaflet's own bottom margin and let the
+     offset carry the whole gap between dot and popup. */
+  .leaflet-popup { margin-bottom: 0; }
+  /* Leaflet puts controls (z-index 1000) above the popup pane (700), so a popup
+     near the legend would slide underneath it. Lift popups above the controls. */
+  .leaflet-popup-pane { z-index: 1100; }
+  /* Flipped below the dot: move the tip from under the bubble to above it. */
+  .leaflet-popup.popup-below .leaflet-popup-tip-container {
+    top: 0; margin-top: -20px; transform: rotate(180deg);
+  }
+  @media (max-width: 640px) {
+    .wrap { padding: 15px; }
+    #map { height: 460px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>O&rsquo;Hare area data centers avoided $100 million in taxes due to incentives and reductions</h1>
+  <p class="subtitle">These are a fraction of the hundreds of data centers around the state, many of which use incentives and property tax appeals to lower their tax bills.<br><span class="dek-instruction">Click a dot for more information about the property.</span></p>
+  <div class="views" role="group" aria-label="Show which properties">
+    <span class="views-label" aria-hidden="true">Show:</span>
+    <button type="button" data-view="comb" aria-pressed="true">All properties</button>
+    <button type="button" data-view="inc" aria-pressed="false">With tax incentives</button>
+    <button type="button" data-view="red" aria-pressed="false">With appeal reductions</button>
+  </div>
+  <div id="map"></div>
+  <footer class="graph-footer">
+    <div>Map: Andrew Adams, Illinois Answers Project &bull; Data: Illinois Answers Project and Chicago Tribune analysis of Cook County Assessor records.</div>
+    <div class="footer-note">Note: The combined tax savings a property receives from incentives and reductions may not equal the sum of savings it would receive individually from each, because incentives and reductions act differently on a property&rsquo;s tax assessment level. An incentive lowers the property&rsquo;s assessment level by a fixed proportion over time, while a Board of Review reduction represents a one-time decrease in assessed value after the incentive has been applied.</div>
+  </footer>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+var DATA = {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.9577542,41.9992065]},"properties":{"addr":"1925 Busse Rd, Elk Grove Village","name":"SDC Chicago II Data Center","cls":"Class 677","incF":1,"redF":1,"fmv":148793512,"bor":95188000,"red":1941827,"inc":2264094,"comb":3094198}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.9525585,42.0014901]},"properties":{"addr":"2021 Lunt Ave, Elk Grove Village","name":"EdgeConnex Inc.","cls":"Class 597","incF":0,"redF":1,"fmv":30638000,"bor":6459804,"red":252090,"inc":-1304769,"comb":-176638}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.9755152,42.023043]},"properties":{"addr":"200 Innovation Dr, Elk Grove Village","name":"T5 Data Centers","cls":"Class 677","incF":1,"redF":0,"fmv":106223850,"bor":106223850,"red":-92309,"inc":3937292,"comb":3619699}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.9622069,41.9951049]},"properties":{"addr":"2200 Busse Rd, Elk Grove Village","name":"Digital Realty CH1","cls":"Class 597","incF":0,"redF":1,"fmv":228504396,"bor":121375556,"red":6617189,"inc":-336875,"comb":-1317404}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.9721665,42.0231515]},"properties":{"addr":"201 Innovation Dr, Elk Grove Village","name":"Microsoft Campus Data Center","cls":"Class 677","incF":1,"redF":1,"fmv":94489000,"bor":83332700,"red":214442,"inc":3088809,"comb":3219581}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.9622504,42.0247335]},"properties":{"addr":"1501 / 1701 Midway Ct, Elk Grove Village","name":"Prime Data Centers","cls":"Class 597","incF":0,"redF":1,"fmv":109105526,"bor":67220222,"red":2544254,"inc":-186569,"comb":-629030}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.9644177,42.006683]},"properties":{"addr":"1441 Touhy Ave, Elk Grove Village","name":"STACK Infrastructure","cls":"Class 677","incF":1,"redF":1,"fmv":227000000,"bor":159995690,"red":1582436,"inc":5930399,"comb":7735283}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.952713,42.0025463]},"properties":{"addr":"2020-80 Lunt Ave, Elk Grove Village","name":"Stream DC Chicago I","cls":"Class 677","incF":1,"redF":1,"fmv":89258998,"bor":64319750,"red":670220,"inc":2081898,"comb":2640940}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.9576785,41.9941803]},"properties":{"addr":"2299 Busse Rd, Elk Grove Village","name":"Digital Realty Trust","cls":"Class 597","incF":0,"redF":1,"fmv":166947000,"bor":104049020,"red":3813886,"inc":-288786,"comb":-962505}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.9653629,41.9933377]},"properties":{"addr":"1400-1520 E Devon Ave, Elk Grove Village","name":"Digital Realty Trust","cls":"Class 597","incF":0,"redF":1,"fmv":179677000,"bor":103677952,"red":4656173,"inc":-287756,"comb":-1035898}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.9174957,41.9128435]},"properties":{"addr":"501-505 Northwest Ave, Northlake","name":"Aligned ORD-01 & ORD-02 Data Centers","cls":"Class 663","incF":1,"redF":1,"fmv":282884092,"bor":242583330,"red":824601,"inc":8991591,"comb":9639597}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.9176967,41.9209372]},"properties":{"addr":"601 Northwest Ave, Northlake","name":"Microsoft CHI/CH2 Azure Data Center","cls":"Class 677","incF":1,"redF":1,"fmv":666856010,"bor":364537040,"red":7450388,"inc":13511926,"comb":22723877}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.9121916,41.9200187]},"properties":{"addr":"505 Railroad Ave, Northlake","name":"Digital Realty ORD-23 Data Center","cls":"Class 677","incF":1,"redF":1,"fmv":190579480,"bor":61463160,"red":3263842,"inc":2278193,"comb":6494213}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.8580362,41.9267033]},"properties":{"addr":"9333/9355 & 9377 Grand Ave, Franklin Park","name":"Digital Realty ORD-12 / ORD-13 & ORD-14 Data Centers","cls":"Class 677","incF":1,"redF":1,"fmv":223376016,"bor":147619192,"red":1817644,"inc":5458745,"comb":7598879}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.8603831,41.9290561]},"properties":{"addr":"9401 Grand Ave, Franklin Park","name":"Digital Realty ORD-15 Data Center","cls":"Class 677","incF":1,"redF":1,"fmv":165385000,"bor":117500000,"red":1128152,"inc":4355254,"comb":5635682}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.8610902,41.9243503]},"properties":{"addr":"2425-2553 Edgington St / 2550 S Martens St, Franklin Park","name":"Digital Realty","cls":"Class 597","incF":0,"redF":1,"fmv":40682513,"bor":29108541,"red":693761,"inc":335022,"comb":181264}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.8807577,42.0111014]},"properties":{"addr":"1700 E Touhy Ave, Des Plaines","name":"Iron Mountain Data Centers","cls":"Class 597","incF":0,"redF":1,"fmv":29872816,"bor":24806704,"red":271503,"inc":-68851,"comb":-172227}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.953332,42.0314323]},"properties":{"addr":"1305 E Algonquin Rd, Mount Prospect","name":"Lumen Arlington Heights 1","cls":"Class 663","incF":1,"redF":1,"fmv":12522452,"bor":12522450,"red":471708,"inc":464157,"comb":-72196}},{"type":"Feature","geometry":{"type":"Point","coordinates":[-87.8801365,41.9106898]},"properties":{"addr":"10400 W North Ave, Melrose Park","name":"Bridge Point Industrial Park","cls":"Class 663","incF":1,"redF":0,"fmv":179442004,"bor":179442004,"red":-178541,"inc":5960274,"comb":5423769}}]};
+
+// ---- View definitions -------------------------------------------------------
+var VIEWS = {
+  comb: {
+    field: "comb",
+    filter: function () { return true; },
+    legendTitle: "Without incentives or reductions, data centers would pay:"
+  },
+  inc: {
+    field: "inc",
+    filter: function (p) { return p.incF === 1; },
+    legendTitle: "Without incentives, data centers would pay:"
+  },
+  red: {
+    field: "red",
+    filter: function (p) { return p.redF === 1; },
+    legendTitle: "Without reductions, data centers would pay:"
+  }
+};
+
+// ---- Scales -----------------------------------------------------------------
+// Shared bins across all three views so the views stay comparable.
+// A single blue hue carries the magnitude, light to dark, so the order survives
+// colorblindness and grayscale printing. The negative bin is a slate gray dark
+// enough to stay clear of the lightest blue, which sits directly opposite it in
+// meaning.
+var BINS = [
+  { min: -Infinity, color: "#5f676f", label: "Less" },
+  { min: 0,         color: "#6da7ec", label: "Up to $1M more" },
+  { min: 1e6,       color: "#2a78d6", label: "$1M to $3M more" },
+  { min: 3e6,       color: "#1c5cab", label: "$3M to $6M more" },
+  { min: 6e6,       color: "#0d366b", label: "$6M+ more" }
+];
+
+function colorFor(v) {
+  var c = BINS[0].color;
+  for (var i = 0; i < BINS.length; i++) { if (v >= BINS[i].min) c = BINS[i].color; }
+  return c;
+}
+
+var MAXVAL = 364537040; // largest Board of Review assessed value, anchors the radius scale
+function radiusFor(v) {
+  return 4 + 10 * Math.sqrt(Math.min(Math.abs(v), MAXVAL) / MAXVAL);
+}
+
+function fmtMoney(v) {
+  if (v == null) return "Not available";
+  var s = "$" + Math.round(Math.abs(v)).toLocaleString("en-US");
+  return v < 0 ? "−" + s : s;
+}
+
+// ---- Map --------------------------------------------------------------------
+// zoomSnap 0.25 lets fitBounds land on a fractional zoom, so the default view can
+// be nudged in by less than a full doubling.
+var map = L.map("map", { scrollWheelZoom: false, zoomControl: true, zoomSnap: 0.25 });
+map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
+
+L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  subdomains: "abcd", maxZoom: 20
+}).addTo(map);
+
+function esc(s){ return (s==null?"":String(s)).replace(/[&<>"]/g, function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); }
+
+function popupHtml(p) {
+  var html = '<span class="pop-addr">' + esc(p.name) + '</span>';
+  html += '<span class="pop-sub">' + esc(p.addr) + '</span>';
+  html += '<span class="pop-row"><span class="pop-label">Saved by incentive:</span> ' +
+    (p.incF === 1 ? fmtMoney(p.inc) : 'No incentive') + '</span>';
+  html += '<span class="pop-row"><span class="pop-label">Saved by reduction:</span> ' +
+    (p.redF === 1 ? fmtMoney(p.red) : 'No reduction') + '</span>';
+  html += '<span class="pop-row"><span class="pop-label">Combined effect:</span> ' + fmtMoney(p.comb) + '</span>';
+  return html;
+}
+
+// Build one marker per property up front; views restyle and show/hide them.
+var group = L.layerGroup().addTo(map);
+var markers = DATA.features.map(function (f) {
+  var c = f.geometry.coordinates;
+  var p = f.properties;
+  var m = L.circleMarker([c[1], c[0]], {
+    color: "#333333", weight: 1, opacity: 1, fillOpacity: 0.85
+  });
+  m.bindPopup(popupHtml(p), { autoPan: false, maxWidth: 260 });
+  return { marker: m, props: p };
+});
+
+// ---- Popup placement --------------------------------------------------------
+// Leaflet's default is autoPan: it slides the map so the popup fits, which pulls
+// the surrounding dots out from under the reader. Instead, place the popup by
+// hand — flip it below the dot when there isn't room above, and slide it
+// sideways near the left or right edge.
+var POPUP_PAD = 10; // keep this much clear of the map edge
+var POPUP_GAP = 8;  // space between the dot and the tip
+var POPUP_TIP = 20; // height of Leaflet's tip, which sits outside the bubble
+
+function placePopup(popup) {
+  var el = popup.getElement();
+  if (!el) return;
+
+  var src = popup._source;
+  var r = (src && src.getRadius) ? src.getRadius() : 6;
+  var w = el.offsetWidth;
+  var h = el.offsetHeight;
+  var size = map.getSize();
+  var pt = map.latLngToContainerPoint(popup.getLatLng());
+
+  // Leaflet sets the popup's `bottom` to -offset.y, so a larger y moves it down.
+  var roomAbove = pt.y - r - POPUP_GAP - POPUP_TIP - h;
+  var below = roomAbove < POPUP_PAD;
+  var dy = below ? (r + POPUP_GAP + POPUP_TIP + h) : -(r + POPUP_GAP + POPUP_TIP);
+
+  // The bubble is centred on the dot; nudge it back inside the left/right edges,
+  // but never so far that the tip slides off the bubble it belongs to.
+  var dx = 0;
+  if (pt.x - w / 2 < POPUP_PAD) dx = POPUP_PAD - (pt.x - w / 2);
+  else if (pt.x + w / 2 > size.x - POPUP_PAD) dx = (size.x - POPUP_PAD) - (pt.x + w / 2);
+  var limit = Math.max(0, w / 2 - 22);
+  dx = Math.max(-limit, Math.min(limit, dx));
+
+  el.classList.toggle("popup-below", below);
+  popup.options.offset = L.point(dx, dy);
+  popup.update();
+
+  // Sliding the bubble carries the tip along with it, so shift the tip back by
+  // the same amount to keep it pointing at the dot. Leaflet centres the 40px tip
+  // container with margin-left: -20px; the clamp on dx above is what guarantees
+  // the result still lands within the bubble.
+  var tip = el.querySelector(".leaflet-popup-tip-container");
+  if (tip) tip.style.marginLeft = (-20 - dx) + "px";
+}
+
+map.on("popupopen", function (e) { placePopup(e.popup); });
+
+var bounds = L.latLngBounds(markers.map(function (m) { return m.marker.getLatLng(); }));
+// Extra padding on the bottom-right keeps the dots clear of the legend, which
+// also nudges the view slightly wider and shifts the center east.
+map.fitBounds(bounds, {
+  paddingTopLeft: [25, 25],
+  paddingBottomRight: [190, 75],
+  maxZoom: 15
+});
+map.setZoom(map.getZoom() - 0.25);
+
+// ---- Legend -----------------------------------------------------------------
+var legendDiv;
+var legend = L.control({ position: "bottomright" });
+legend.onAdd = function () {
+  legendDiv = L.DomUtil.create("div", "legend");
+  L.DomEvent.disableClickPropagation(legendDiv);
+  return legendDiv;
+};
+legend.addTo(map);
+
+function drawLegend(view) {
+  var html = '<div class="legend-title">' + view.legendTitle + '</div>';
+  BINS.forEach(function (b) {
+    html += '<div class="row"><span class="swatch" style="background:' + b.color + '"></span>' + b.label + '</div>';
+  });
+  html += '<div class="legend-note">Circles are sized by the property&rsquo;s assessed value after appeal.</div>';
+  legendDiv.innerHTML = html;
+}
+
+// ---- View switching ---------------------------------------------------------
+var buttons = Array.prototype.slice.call(document.querySelectorAll(".views button"));
+
+function setView(key) {
+  var view = VIEWS[key];
+  group.clearLayers();
+  markers.forEach(function (m) {
+    if (!view.filter(m.props)) return;
+    var v = m.props[view.field];
+    m.marker.setStyle({ fillColor: colorFor(v) });
+    m.marker.setRadius(radiusFor(m.props.bor));
+    group.addLayer(m.marker);
+  });
+  drawLegend(view);
+  buttons.forEach(function (b) {
+    b.setAttribute("aria-pressed", String(b.getAttribute("data-view") === key));
+  });
+}
+
+buttons.forEach(function (b) {
+  b.addEventListener("click", function () { setView(b.getAttribute("data-view")); });
+});
+
+setView("comb");
+
+// ---- Embed height reporting -------------------------------------------------
+// When this page runs inside an iframe it measures itself and tells the parent
+// how tall to make the frame, so the embed never scrolls or leaves dead space.
+// The parent listener is in EMBED.md; without one the iframe just keeps whatever
+// fixed height the host set, so nothing breaks.
+(function () {
+  if (window.parent === window) return;
+  var last = 0;
+  function send() {
+    var h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+    if (!h || Math.abs(h - last) < 2) return;
+    last = h;
+    window.parent.postMessage({ type: "incentive-map-height", height: h }, "*");
+  }
+  window.addEventListener("load", send);
+  window.addEventListener("resize", send);
+  if (window.ResizeObserver) { new ResizeObserver(send).observe(document.body); }
+  // The web font and the tile layer can both settle after load and change the
+  // wrap height, so re-measure a couple of times before going quiet.
+  setTimeout(send, 200);
+  setTimeout(send, 1000);
+  send();
+})();
+</script>
+</body>
+</html>
