@@ -112,7 +112,7 @@ function esc(s){ return (s==null?"":String(s)).replace(/[&<>"]/g, function(c){
 function popupHtml(p) {
   var html = '<span class="pop-addr">' + esc(p.name) + '</span>';
   html += '<span class="pop-sub">' + esc(p.addr) + '</span>';
-  html += '<span class="pop-row">This property saved <b>' + fmtMoney(p.comb) + '</b> due to tax incentives and property tax reductions.</span>';
+  html += '<span class="pop-row">This property saved <b>' + fmtMoney(p.comb) + '</b> due to tax incentives and/or property tax reductions.</span>';
   return html;
 }
 
