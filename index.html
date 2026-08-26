@@ -63,7 +63,7 @@
   <p class="subtitle">These are a fraction of the hundreds of data centers around the state, many of which use incentives and property tax appeals to lower their tax bills.<br><span class="dek-instruction">Click a dot for more information about the property.</span></p>
   <div id="map"></div>
   <footer class="graph-footer">
-    <div>Map: Andrew Adams, Illinois Answers Project &bull; Data: Illinois Answers Project and Chicago Tribune analysis of Cook County assessor records.</div>
+    <div>Map: Andrew Adams, Illinois Answers Project &bull; Data: Illinois Answers Project and Chicago Tribune analysis of Cook County Assessor records.</div>
   </footer>
 </div>
 
@@ -101,7 +101,7 @@ function fmtMoney(v) {
 var map = L.map("map", { scrollWheelZoom: false, zoomControl: true, zoomSnap: 0.25 });
 map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
 
-L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?api_key=cb1_28rf_1_f4fc41507f471cfefb5f52ba", {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
   subdomains: "abcd", maxZoom: 20
 }).addTo(map);
@@ -112,7 +112,7 @@ function esc(s){ return (s==null?"":String(s)).replace(/[&<>"]/g, function(c){
 function popupHtml(p) {
   var html = '<span class="pop-addr">' + esc(p.name) + '</span>';
   html += '<span class="pop-sub">' + esc(p.addr) + '</span>';
-  html += '<span class="pop-row">This property saved <b>' + fmtMoney(p.comb) + '</b> due to tax incentives and/or property tax reductions.</span>';
+  html += '<span class="pop-row">This property saved <b>' + fmtMoney(p.comb) + '</b> due to tax incentives and property tax reductions.</span>';
   return html;
 }
 
