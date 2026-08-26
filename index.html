@@ -101,7 +101,7 @@ function fmtMoney(v) {
 var map = L.map("map", { scrollWheelZoom: false, zoomControl: true, zoomSnap: 0.25 });
 map.attributionControl.setPrefix('<a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a>');
 
-L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png?api=cb1_28rf_1_f4fc41507f471cfefb5f52ba", {
+L.tileLayer("https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=cb1_28rf_1_f4fc41507f471cfefb5f52ba", {
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
   subdomains: "abcd", maxZoom: 20
 }).addTo(map);
